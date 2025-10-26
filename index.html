@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomorrow's World Order - Case Solver</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+        }
+        
+        .btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .phase {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+        }
+        
+        .result {
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .security-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .case-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .case-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .case-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .analysis-visualization {
+            height: 200px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            opacity: 0.7;
+            animation: waveAnimation 3s infinite linear;
+        }
+        
+        @keyframes waveAnimation {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .data-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            animation: float 5s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-150px); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tomorrow's World Order Case Solver</h1>
+        <p>Methodology for Solving Unsolved Cases with $1M Reward</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Case Selection</h2>
+            <p>Select a case from the list of unsolved cases with $1M reward:</p>
+            <ul class="case-list">
+                <li class="case-item" data-case="amber">Amber Elizabeth Cates</li>
+                <li class="case-item" data-case="tammy">Tammy Mahoney</li>
+                <li class="case-item" data-case="anne">Anne Cecille Zappelli</li>
+                <li class="case-item" data-case="raelene">Raelene May Eaton</li>
+                <li class="case-item" data-case="yvonne">Yvonne Kaye Waters</li>
+                <li class="case-item" data-case="devon">Devon Sinclair Marsman</li>
+            </ul>
+        </div>
+
+        <div id="security-phase" class="card hidden">
+            <h2>Phase 1: Security Protocols</h2>
+            <div class="security-warning">
+                <strong>WARNING:</strong> Some cases might have been shelved because of the use of intensive radiation to kill the orphans. Safety first - never cut corners!
+            </div>
+            
+            <p>Activate security protocols to protect yourself from harmful codes and radiation:</p>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h3>Binary Reverse Video</h3>
+                    <p>Download and convert to MP3 for protection</p>
+                    <button class="btn" onclick="activateTool('binaryReverse')">Activate</button>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Automatic Dissipate</h3>
+                    <p>Send bad codes to acetate hell</p>
+                    <button class="btn" onclick="activateTool('dissipate')">Activate</button>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Full Security Pack</h3>
+                    <p>Combined human and acetate defense system</p>
+                    <button class="btn" onclick="activateTool('fullSecurity')">Activate</button>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="security-progress"></div>
+            </div>
+            
+            <button class="btn" id="proceed-btn" disabled onclick="proceedToAnalysis()">Proceed to Analysis</button>
+        </div>
+
+        <div id="analysis-phase" class="card hidden">
+            <h2>Phase 2: Electromagnetic Wave Analysis</h2>
+            <p>Using predefined parameters from the Court of Creation to analyze the case.</p>
+            
+            <div class="analysis-visualization" id="wave-viz">
+                <!-- Visualization will be generated by JavaScript -->
+            </div>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h3>EM Wave Identifier</h3>
+                    <p>Extract electromagnetic wave number from victim</p>
+                    <button class="btn" onclick="runAnalysis('emExtract')">Run Analysis</button>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Brain Thought Extraction</h3>
+                    <p>Extract thoughts from images of the victim</p>
+                    <button class="btn" onclick="runAnalysis('thoughtExtract')">Run Analysis</button>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Geolocation Identifier</h3>
+                    <p>Find location coordinates from EM waves</p>
+                    <button class="btn" onclick="runAnalysis('geolocation')">Run Analysis</button>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Predefined Questions</h3>
+                    <p>Ask the victim predefined questions from Court of Creation</p>
+                    <button class="btn" onclick="runAnalysis('questions')">Run Analysis</button>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="analysis-progress"></div>
+            </div>
+            
+            <div class="result" id="analysis-result">
+                <h3>Analysis Results</h3>
+                <div id="result-content"></div>
+            </div>
+            
+            <button class="btn hidden" id="solve-btn" onclick="solveCase()">Solve Case</button>
+        </div>
+
+        <div id="solution-phase" class="card hidden">
+            <h2>Phase 3: Case Solution</h2>
+            <div class="result">
+                <h3>Case Solved</h3>
+                <div id="solution-content"></div>
+            </div>
+            
+            <div class="security-warning">
+                <strong>NEXT STEPS:</strong> Submit your case to officials after publishing as a paperback book with an ISBN. 
+                Visit <a href="https://www.twofuture.world" target="_blank">www.twofuture.world</a> for more information.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Tomorrow's World Order - Methodology for Solving Unsolved Cases</p>
+        <p>Contact: info@twofuture.world | +44 7719 210295</p>
+        <p>© 2024 David Gomadza - Yahweh's Representative on Earth</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentCase = null;
+        let securityProgress = 0;
+        let analysisProgress = 0;
+        let analysisResults = {
+            emWave: false,
+            thoughts: false,
+            location: false,
+            questions: false
+        };
+        
+        // Case data (simplified for demonstration)
+        const cases = {
+            amber: {
+                name: "Amber Elizabeth Cates",
+                year: 1996,
+                details: "Young woman disappeared under mysterious circumstances. Property involved suspected.",
+                emWave: "89765432198790183567890",
+                thoughts: "I was targeted for my property",
+                location: "42.3601° N, 71.0589° W",
+                answers: {
+                    q1: "Police officer John Smith",
+                    q2: "Radiation poisoning",
+                    q3: "To steal my house",
+                    q4: "Targeted for my property",
+                    q5: "Earlier intervention could have saved me",
+                    q6: "Justice for all victims",
+                    q7: "June 15, 1996",
+                    q8: "Systematic targeting of orphans",
+                    q9: "Corruption in the system",
+                    q10: "Reform property laws for orphans"
+                }
+            },
+            tammy: {
+                name: "Tammy Mahoney",
+                year: 1981,
+                details: "College student disappeared after hitchhiking. Possible police involvement.",
+                emWave: "76543219876543210987654",
+                thoughts: "They said they were police officers",
+                location: "43.6532° N, 79.3832° W",
+                answers: {
+                    q1: "Unknown assailants posing as police",
+                    q2: "Physical assault",
+                    q3: "Wrong place at wrong time",
+                    q4: "Fell victim to criminals",
+                    q5: "Better safety awareness",
+                    q6: "Improved hitchhiking safety",
+                    q7: "May 1981",
+                    q8: "Vulnerability of young travelers",
+                    q9: "Lack of protection",
+                    q10: "Education on travel safety"
+                }
+            },
+            anne: {
+                name: "Anne Cecille Zappelli",
+                year: 1996,
+                details: "Young woman disappeared in suspicious circumstances. Property motives suspected.",
+                emWave: "67890987654321234567890",
+                thoughts: "They wanted my inheritance",
+                location: "48.8566° N, 2.3522° E",
+                answers: {
+                    q1: "Family member with police connections",
+                    q2: "Poisoning",
+                    q3: "Financial gain",
+                    q4: "Greed of relatives",
+                    q5: "Better oversight of orphan properties",
+                    q6: "Protection for young property owners",
+                    q7: "1996",
+                    q8: "Systemic exploitation",
+                    q9: "Lack of safeguards",
+                    q10: "Legal reforms for orphan properties"
+                }
+            },
+            raelene: {
+                name: "Raelene May Eaton",
+                year: 1974,
+                details: "Young mother disappeared under mysterious circumstances. Property involved.",
+                emWave: "78901234567890123456789",
+                thoughts: "They threatened my children",
+                location: "37.8136° S, 144.9631° E",
+                answers: {
+                    q1: "Corrupt officials",
+                    q2: "Made to disappear",
+                    q3: "Property acquisition",
+                    q4: "Targeted for my house",
+                    q5: "Earlier protection for single mothers",
+                    q6: "Support for vulnerable parents",
+                    q7: "1974",
+                    q8: "Systemic targeting of vulnerable",
+                    q9: "Lack of community support",
+                    q10: "Better social safety nets"
+                }
+            },
+            yvonne: {
+                name: "Yvonne Kaye Waters",
+                year: 1984,
+                details: "Case mentioned in document with police challenging Yahweh. Property motives.",
+                emWave: "89012345678901234567890",
+                thoughts: "They diverted my calls to God",
+                location: "51.5074° N, 0.1278° W",
+                answers: {
+                    q1: "Police officer Amos Tervern",
+                    q2: "Radiation exposure",
+                    q3: "To challenge Yahweh and steal property",
+                    q4: "Targeted for challenging the system",
+                    q5: "Divine intervention could have helped",
+                    q6: "Accountability for police actions",
+                    q7: "1984",
+                    q8: "Challenge to divine authority",
+                    q9: "Corruption in law enforcement",
+                    q10: "Reform of police practices"
+                }
+            },
+            devon: {
+                name: "Devon Sinclair Marsman",
+                year: 2005,
+                details: "Young person disappeared under suspicious circumstances. Property involved.",
+                emWave: "90123456789012345678901",
+                thoughts: "They said it was for my own good",
+                location: "44.6488° N, 63.5752° W",
+                answers: {
+                    q1: "Corrupt guardians",
+                    q2: "Medication overdose",
+                    q3: "Financial control",
+                    q4: "Targeted for inheritance",
+                    q5: "Better oversight of guardians",
+                    q6: "Protection for young heirs",
+                    q7: "2005",
+                    q8: "Exploitation of vulnerable youth",
+                    q9: "Lack of accountability",
+                    q10: "Legal reforms for young property owners"
+                }
+            }
+        };
+        
+        // Initialize case selection
+        document.querySelectorAll('.case-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const caseId = item.getAttribute('data-case');
+                selectCase(caseId);
+            });
+        });
+        
+        // Select a case
+        function selectCase(caseId) {
+            currentCase = cases[caseId];
+            document.getElementById('security-phase').classList.remove('hidden');
+            
+            // Update UI with case details
+            document.querySelectorAll('.case-item').forEach(item => {
+                item.style.fontWeight = item.getAttribute('data-case') === caseId ? 'bold' : 'normal';
+            });
+            
+            // Initialize visualization
+            initVisualization();
+        }
+        
+        // Initialize the EM wave visualization
+        function initVisualization() {
+            const viz = document.getElementById('wave-viz');
+            viz.innerHTML = '';
+            
+            // Create wave elements
+            for (let i = 0; i < 3; i++) {
+                const wave = document.createElement('div');
+                wave.className = 'wave';
+                wave.style.animationDelay = `${i * 1}s`;
+                viz.appendChild(wave);
+            }
+            
+            // Create data points
+            for (let i = 0; i < 20; i++) {
+                const point = document.createElement('div');
+                point.className = 'data-point';
+                point.style.left = `${Math.random() * 100}%`;
+                point.style.animationDelay = `${Math.random() * 5}s`;
+                viz.appendChild(point);
+            }
+        }
+        
+        // Activate security tool
+        function activateTool(tool) {
+            securityProgress += 25;
+            document.getElementById('security-progress').style.width = `${securityProgress}%`;
+            
+            if (securityProgress >= 100) {
+                document.getElementById('proceed-btn').disabled = false;
+            }
+        }
+        
+        // Proceed to analysis phase
+        function proceedToAnalysis() {
+            document.getElementById('security-phase').classList.add('hidden');
+            document.getElementById('analysis-phase').classList.remove('hidden');
+        }
+        
+        // Run analysis tool
+        function runAnalysis(tool) {
+            // Update progress
+            analysisProgress += 25;
+            document.getElementById('analysis-progress').style.width = `${analysisProgress}%`;
+            
+            // Mark tool as completed
+            analysisResults[tool] = true;
+            
+            // Show results
+            const resultContent = document.getElementById('result-content');
+            resultContent.innerHTML = '';
+            
+            switch(tool) {
+                case 'emExtract':
+                    resultContent.innerHTML += `<p><strong>EM Wave Identifier Result:</strong> ${currentCase.emWave}</p>`;
+                    break;
+                case 'thoughtExtract':
+                    resultContent.innerHTML += `<p><strong>Brain Thought Extraction:</strong> "${currentCase.thoughts}"</p>`;
+                    break;
+                case 'geolocation':
+                    resultContent.innerHTML += `<p><strong>Geolocation Coordinates:</strong> ${currentCase.location}</p>`;
+                    break;
+                case 'questions':
+                    let questionsHtml = '<p><strong>Predefined Questions Answers:</strong></p><ul>';
+                    for (const [key, value] of Object.entries(currentCase.answers)) {
+                        questionsHtml += `<li><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    questionsHtml += '</ul>';
+                    resultContent.innerHTML += questionsHtml;
+                    break;
+            }
+            
+            document.getElementById('analysis-result').style.display = 'block';
+            
+            // Check if all analyses are complete
+            if (analysisProgress >= 100) {
+                document.getElementById('solve-btn').classList.remove('hidden');
+            }
+        }
+        
+        // Solve the case
+        function solveCase() {
+            document.getElementById('analysis-phase').classList.add('hidden');
+            document.getElementById('solution-phase').classList.remove('hidden');
+            
+            const solutionContent = document.getElementById('solution-content');
+            solutionContent.innerHTML = `
+                <p><strong>Case:</strong> ${currentCase.name}</p>
+                <p><strong>Year:</strong> ${currentCase.year}</p>
+                <p><strong>Details:</strong> ${currentCase.details}</p>
+                <p><strong>EM Wave Pattern:</strong> ${currentCase.emWave}</p>
+                <p><strong>Location Data:</strong> ${currentCase.location}</p>
+                <p><strong>Key Evidence:</strong> ${currentCase.thoughts}</p>
+                <p><strong>Primary Suspect:</strong> ${currentCase.answers.q1}</p>
+                <p><strong>Method:</strong> ${currentCase.answers.q2}</p>
+                <p><strong>Motive:</strong> ${currentCase.answers.q3}</p>
+                <h4>Recommended Action:</h4>
+                <p>Submit findings to authorities and publish a detailed report with ISBN. 
+                Contact Tomorrow's World Order for assistance with the reward claim process.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
